@@ -2,7 +2,7 @@
 
 An Objective-C wrapper for the REST-based [CloudApp API](http://support.getcloudapp.com/faqs/developers/api) 
 
-Currently only tested around an iPhone App.
+Still a *work in progress* and only tested around an iPhone App.
 
 ## TODO
 
