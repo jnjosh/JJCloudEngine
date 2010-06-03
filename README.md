@@ -6,9 +6,10 @@ Still a *work in progress* and only tested around an iPhone App.
 
 ## TODO
 
-* Finish implementation of file upload. Can't seem to get anything but 400 response from the Amazon S3 upload process.
 * Create more convenience methods.
 * Add tests
+* Add more exception handling
+* Test for Mac Desktop use.
 * Better documentation
 
 ## Usage and Requirements
@@ -51,5 +52,7 @@ TouchJSON is used for JSON parsing. This must also be added to your project.
 	
 ## CREDITS
 
+**[Matt Gemmell](http://mattgemmell.com/)** or [@mattgemmell](http://twitter.com/mattgemmell)
 This engine is a direct translation of [Matt Gemmell's MGTwitterEngine](http://github.com/mattgemmell/MGTwitterEngine) from a Twitter Engine to a CloudApp Engine. Large portions of this project are merely a "reimagining" of Matt's framework.
+
 JSON Parsing supplied by [TouchJSON](http://code.google.com/p/touchcode/wiki/TouchJSON)
