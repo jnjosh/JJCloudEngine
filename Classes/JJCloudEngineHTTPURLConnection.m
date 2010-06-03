@@ -18,7 +18,7 @@
 	[_data release];
 	[_identifier release];
 	[_url release];
-	[_userInfo release];
+	[userData release];
 	[super dealloc];
 }
 
@@ -38,7 +38,7 @@
 		_requestType = newRequestType;
 		_responseType = newResponseType;
 		_url = [[request URL] retain];
-		_userInfo = [userInfoDict retain];
+		[self setUserData:userInfoDict];
 	}
 	
 	return self;
@@ -73,6 +73,7 @@
 #pragma mark properties
 
 @synthesize data = _data, requestType = _requestType, responseType = _responseType;
-@synthesize identifier = _identifier, url = _url, userData = _userInfo;
+@synthesize identifier = _identifier, url = _url;
+@synthesize userData;
 
 @end

@@ -38,7 +38,7 @@
 - (NSString *)getCloudItems:(NSInteger)itemsPerPage forPage:(NSInteger)pageNumber;
 - (NSString *)getCloudItem:(NSString *)shortSlug;
 - (NSString *)createBookmarkWithURL:(NSString *)urlString andDescription:(NSString *)description;
-- (NSString *)uploadFile:(NSString *)localPathToFile ofType:(JJCloudItemType)itemType;
+- (NSString *)uploadFile:(NSString *)localPathToFile;
 - (NSString *)deleteCloudItem:(NSString *)shortSlug;
 #pragma mark -
 

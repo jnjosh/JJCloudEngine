@@ -14,18 +14,22 @@
 @synthesize window;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
-	
-	NSLog(@"Testing JJCloudEngine version %@", [JJCloudEngine version]);
-	NSString *userEmail = @"<user.email>";
-	NSString *userPassword = @"<user.password>";
 	[tableView setDelegate:self];
 	[tableView setDataSource:self];
 	
+	NSLog(@"Testing JJCloudEngine version %@", [JJCloudEngine version]);
+
+	// setup user email and password for CloudApp
+	NSString *userEmail = nil;
+	NSString *userPassword = nil;
 	if (!userEmail || !userPassword)
 	{
 		NSLog(@"You failed at the simple parts. I need to log in.");
 	}
 	
+	//=== Samples below ===//
+	
+	// create cloud engine instance
 	cloudEngine = [[JJCloudEngine alloc] initWithDelegate:self];
 	[cloudEngine setEmail:userEmail password:userPassword];
 	
@@ -47,7 +51,8 @@
 	// sample creating new bookmark
 	//NSLog(@"Create new bookmark for jnjosh.com from connection: %@", [cloudEngine createBookmarkWithURL:@"http://www.jnjosh.com" andDescription:@"Link from JJCloudEngine!"]);
 
-	//[cloudEngine uploadFile:@"" ofType:JJCloudImageType];
+	// upload a file -- server determines type
+	//[cloudEngine uploadFile:[[NSBundle mainBundle] pathForResource:@"JJCloudEngine" ofType:@"jpg"]];
 	
 	[window makeKeyAndVisible];
 	return YES;
@@ -82,6 +87,7 @@
 	UIImageView *imv = [[UIImageView alloc] initWithImage:image];
 	[imv setFrame:CGRectMake(0, 0, imv.frame.size.width, imv.frame.size.height)];
 	[window addSubview:imv];
+	[imv release];
 }
 
 #pragma mark -
@@ -108,7 +114,7 @@
 	UITableViewCell *cell = [aTableView dequeueReusableCellWithIdentifier:cellId];
 	if (cell == nil)
 	{
-		cell = [[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellId];
+		cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:cellId] autorelease];
 		CGRect frame = {{cell.indentationWidth, 0}, { cell.frame.size.width, cell.frame.size.height}};
 		itemName = [[[UILabel alloc] initWithFrame:frame] autorelease];
 		[[cell contentView] addSubview:itemName];

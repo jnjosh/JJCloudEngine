@@ -13,7 +13,7 @@
 	JJCloudResponseType _responseType;
 	NSString *_identifier;
 	NSURL *_url;
-	NSDictionary *_userInfo;
+	NSDictionary *userData;
 }
 
 @property (retain, readonly) NSMutableData *data;
