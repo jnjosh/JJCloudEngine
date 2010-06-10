@@ -14,6 +14,10 @@
 #define kCloudTypeArchive @"archive"
 #define kCloudTypeAudio @"audio"
 
+#define kCloudImageDataKey @"CloudImageData"
+#define kCloudImageDescKey @"CloudImageDescription"
+#define kCloudImageFileNameKey @"CloudImageFileName"
+
 #define kCloudFilePathKey @"CloudItemPath"
 #define kCloudFileTypeKey @"CloudItemType"
 

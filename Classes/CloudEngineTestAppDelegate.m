@@ -54,6 +54,9 @@
 	// upload a file -- server determines type
 	//[cloudEngine uploadFile:[[NSBundle mainBundle] pathForResource:@"JJCloudEngine" ofType:@"jpg"]];
 	
+	// upload an image with specified filename
+	//[cloudEngine uploadImage:[UIImage imageNamed:@"JJCloudEngine.jpg"] fileName:@"JJCloudEngine Image.jpg"];
+	
 	[window makeKeyAndVisible];
 	return YES;
 }

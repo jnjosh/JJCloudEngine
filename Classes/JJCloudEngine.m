@@ -56,6 +56,15 @@
                              requestType:(JJCloudRequestType)requestType 
                             responseType:(JJCloudResponseType)responseType;
 
+- (NSString *)_sendDataRequestWithMethod:(NSString *)method 
+								fullPath:(NSString *)fullURLPath 
+                         queryParameters:(NSDictionary *)params
+								fileName:(NSString *)fileName
+							  dataToSend:(NSData *)requestData
+                                    body:(NSDictionary *)bodyParams 
+                             requestType:(JJCloudRequestType)requestType 
+                            responseType:(JJCloudResponseType)responseType;
+
 - (NSMutableURLRequest *)_baseRequestWithMethod:(NSString *)method 
                                            path:(NSString *)path 
                                     requestType:(JJCloudRequestType)requestType 
@@ -98,7 +107,8 @@
 
 + (NSString *)version;
 {
-	return @"1.0"; // May 30, 2010
+	//     @"1.0"; // May 30, 2010
+	return @"1.0.1"; // June 9, 2010
 }
 
 - (BOOL) _isValidDelegateForSelector:(SEL)selector
@@ -200,6 +210,25 @@
 							   userInfo:userInfo];
 }
 
+#if TARGET_OS_IPHONE
+- (NSString *)uploadImage:(UIImage *)image fileName:(NSString *)fileName;
+#else
+- (NSString *)uploadImage:(NSImage *)image fileName:(NSString *)fileName;
+#endif
+{
+	// get s3 data
+	NSString *path = @"items/new";
+	NSDictionary *userInfo = [[[NSDictionary alloc] initWithObjectsAndKeys:image, kCloudImageDataKey, 
+							   fileName, kCloudImageFileNameKey, nil] autorelease];
+	return [self _sendRequestWithMethod:nil 
+								   path:path 
+						queryParameters:nil 
+								   body:nil 
+							requestType:JJCloudUploadS3FileRequest 
+						   responseType:JJCloudS3Data
+							   userInfo:userInfo];
+}
+
 #pragma mark -
 #pragma mark Internal processes
 //
@@ -209,19 +238,20 @@
 {
 
 	JJCloudEngineHTTPURLConnection *connection = [_connections objectForKey:connectionId];
-	NSString *filePath = [[connection userData] objectForKey:kCloudFilePathKey];
-	if (filePath) 
+
+	// build request data dict
+	NSDictionary *s3 = [s3Data objectAtIndex:0];
+	NSDictionary *params = [s3 objectForKey:@"params"];
+	NSString *newUrl = [s3 objectForKey:@"url"];
+	NSMutableDictionary *bodyDict = [NSMutableDictionary dictionaryWithCapacity:0];
+	for (NSString *key in [params allKeys])
 	{
-		NSDictionary *s3 = [s3Data objectAtIndex:0];
-		NSDictionary *params = [s3 objectForKey:@"params"];
-		NSString *newUrl = [s3 objectForKey:@"url"];
-		NSMutableDictionary *bodyDict = [NSMutableDictionary dictionaryWithCapacity:0];
-		for (NSString *key in [params allKeys])
-		{
-			[bodyDict setObject:[params valueForKey:key] forKey:key];
-		}
-		
-		// post file request
+		[bodyDict setObject:[params valueForKey:key] forKey:key];
+	}
+	
+	NSString *filePath = [[connection userData] objectForKey:kCloudFilePathKey];
+	if (filePath) {
+		// post file
 		[self _sendDataRequestWithMethod:kHTTPPostMethod 
 								fullPath:newUrl 
 						 queryParameters:nil 
@@ -229,9 +259,34 @@
 									body:bodyDict
 							 requestType:JJCloudUploadFileRequest 
 							responseType:JJCloudItem];
-	
 	}
-	
+	else 
+	{
+		NSString *fileName = [[connection userData] objectForKey:kCloudImageFileNameKey];
+#if TARGET_OS_IPHONE
+		UIImage *image = [[connection userData] objectForKey:kCloudImageDataKey];
+#else
+		NSImage *image = [[connection userData] objectForKey:kCloudImageDataKey];
+		NSArray *representations = [image representations];
+		NSData *imageData = [NSBitmapImageRep representationOfImageRepsInArray:representations 
+															  usingType:NSJPEGFileType properties:nil];
+#endif
+		
+		// post file
+		[self _sendDataRequestWithMethod:kHTTPPostMethod 
+								fullPath:newUrl 
+						 queryParameters:nil 
+								fileName:fileName 
+#if TARGET_OS_IPHONE		 
+							  dataToSend:UIImageJPEGRepresentation(image, 1.0) 
+#else
+							  dataToSend:imageData
+#endif
+									body:bodyDict 
+							 requestType:JJCloudUploadFileRequest 
+							responseType:JJCloudItem];
+	}
+
 	// close connection
 	[self closeConnection:connectionId];
 }
@@ -356,18 +411,16 @@
 
 - (NSString *)_sendDataRequestWithMethod:(NSString *)method 
 								fullPath:(NSString *)fullURLPath 
-                         queryParameters:(NSDictionary *)params 
-                                filePath:(NSString *)filePath
+                         queryParameters:(NSDictionary *)params
+								fileName:(NSString *)fileName
+							  dataToSend:(NSData *)requestData
                                     body:(NSDictionary *)bodyParams 
                              requestType:(JJCloudRequestType)requestType 
                             responseType:(JJCloudResponseType)responseType;
 {
 	if (!method || ![method isEqualToString:kHTTPPostMethod]) return nil;
-	if (!filePath) return nil;
-	
-	NSString *filename = [filePath lastPathComponent];
+
 	NSString *boundary = @"-----0xkHtMlBoUnDaRy-----";  
-	
 	NSString *bodyPrefix = [NSString stringWithFormat:@"--%@\r\n", boundary];
 	NSString *bodySeperator = [NSString stringWithFormat:@"\r\n--%@\r\n", boundary];
 	NSString *bodySuffix = [NSString stringWithFormat:@"\r\n--%@--\r\n", boundary];
@@ -376,7 +429,7 @@
 	NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:fullURLPath] 
 																   cachePolicy:NSURLCacheStorageAllowed 
 															   timeoutInterval:kUrlRequestTimeout];
-	[theRequest setHTTPMethod:kHTTPPostMethod];
+	[theRequest setHTTPMethod:method];
 	
 	// build body
 	NSMutableData *postBody = [NSMutableData data];
@@ -387,17 +440,17 @@
 	{
 		NSString *contDisp = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", (NSString *)key];
 		NSString *contValue = [bodyParams objectForKey:key];
-
+		
 		[postBody appendData:[[NSString stringWithFormat:@"%@%@", contDisp, contValue] dataUsingEncoding:NSUTF8StringEncoding]];
 		[postBody appendData:[bodySeperator dataUsingEncoding:NSUTF8StringEncoding]];
 	}
 	
 	// file 
-	NSString *fileContDisp = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"file\"; filename=\"%@\"\r\n", filename];
+	NSString *fileContDisp = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"file\"; filename=\"%@\"\r\n", fileName];
 	NSString *fileContType = @"Content-Type: application/octet-stream\r\n\r\n";
-
+	
 	[postBody appendData:[[NSString stringWithFormat:@"%@%@", fileContDisp, fileContType] dataUsingEncoding:NSUTF8StringEncoding]];
-	[postBody appendData:[NSData dataWithContentsOfFile:filePath]];
+	[postBody appendData:requestData];
 	[postBody appendData:[bodySuffix dataUsingEncoding:NSUTF8StringEncoding]];
 	[theRequest setHTTPBody:postBody];
 	
@@ -426,6 +479,26 @@
 	return [connection identifier];
 }
 
+- (NSString *)_sendDataRequestWithMethod:(NSString *)method 
+								fullPath:(NSString *)fullURLPath 
+                         queryParameters:(NSDictionary *)params 
+                                filePath:(NSString *)filePath
+                                    body:(NSDictionary *)bodyParams 
+                             requestType:(JJCloudRequestType)requestType 
+                            responseType:(JJCloudResponseType)responseType;
+{
+	if (!filePath) return nil;
+	NSString *filename = [filePath lastPathComponent];
+
+	return [self _sendDataRequestWithMethod:method 
+								   fullPath:fullURLPath 
+							queryParameters:params 
+								   fileName:filename 
+								 dataToSend:[NSData dataWithContentsOfFile:filePath] 
+									   body:bodyParams
+								requestType:requestType 
+							   responseType:responseType];
+}
 
 - (NSMutableURLRequest *)_baseRequestWithMethod:(NSString *)method 
                                            path:(NSString *)path 

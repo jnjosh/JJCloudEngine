@@ -39,6 +39,11 @@
 - (NSString *)getCloudItem:(NSString *)shortSlug;
 - (NSString *)createBookmarkWithURL:(NSString *)urlString andDescription:(NSString *)description;
 - (NSString *)uploadFile:(NSString *)localPathToFile;
+#if TARGET_OS_IPHONE
+- (NSString *)uploadImage:(UIImage *)image fileName:(NSString *)fileName;
+#else
+- (NSString *)uploadImage:(NSImage *)image fileName:(NSString *)fileName;
+#endif
 - (NSString *)deleteCloudItem:(NSString *)shortSlug;
 #pragma mark -
 
