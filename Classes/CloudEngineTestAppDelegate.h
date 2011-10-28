@@ -15,7 +15,7 @@
     UIWindow *window;
 	IBOutlet UITableView *tableView;
 	NSMutableArray *_cloudItems;
-	
+
 	JJCloudEngine *cloudEngine;
 }
 

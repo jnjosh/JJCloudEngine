@@ -13,7 +13,7 @@
 #pragma mark -
 #pragma mark memory
 
-- (void)dealloc 
+- (void)dealloc
 {
 	[_data release];
 	[_identifier release];
@@ -25,9 +25,9 @@
 #pragma mark -
 #pragma mark constructors
 
-- (id)initWithRequest:(NSURLRequest *)request 
-			 delegate:(id)delegate 
-		  requestType:(JJCloudRequestType)newRequestType 
+- (id)initWithRequest:(NSURLRequest *)request
+			 delegate:(id)delegate
+		  requestType:(JJCloudRequestType)newRequestType
 		 responseType:(JJCloudResponseType)newResponseType
 			 userInfo:(NSDictionary *)userInfoDict;
 {
@@ -40,11 +40,11 @@
 		_url = [[request URL] retain];
 		[self setUserData:userInfoDict];
 	}
-	
+
 	return self;
 }
 
-- (id)initWithRequest:(NSURLRequest *)request delegate:(id)delegate 
+- (id)initWithRequest:(NSURLRequest *)request delegate:(id)delegate
 		  requestType:(JJCloudRequestType)newRequestType responseType:(JJCloudResponseType)newResponseType;
 {
 	return [self initWithRequest:request delegate:delegate requestType:newRequestType responseType:newResponseType userInfo:nil];

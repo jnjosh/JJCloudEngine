@@ -33,41 +33,41 @@
 - (NSString *)_dateToHTTP:(NSDate *)date;
 - (NSString *)_encodeString:(NSString *)string;
 
-- (NSString *)_sendRequestWithMethod:(NSString *)method 
-                                path:(NSString *)path 
+- (NSString *)_sendRequestWithMethod:(NSString *)method
+                                path:(NSString *)path
                      queryParameters:(NSDictionary *)params
-                                body:(NSString *)body 
-                         requestType:(JJCloudRequestType)requestType 
+                                body:(NSString *)body
+                         requestType:(JJCloudRequestType)requestType
                         responseType:(JJCloudResponseType)responseType
 							userInfo:(NSDictionary *)userInfo;
 
-- (NSString *)_sendRequestWithMethod:(NSString *)method 
-                                path:(NSString *)path 
+- (NSString *)_sendRequestWithMethod:(NSString *)method
+                                path:(NSString *)path
                      queryParameters:(NSDictionary *)params
-                                body:(NSString *)body 
-                         requestType:(JJCloudRequestType)requestType 
+                                body:(NSString *)body
+                         requestType:(JJCloudRequestType)requestType
                         responseType:(JJCloudResponseType)responseType;
 
-- (NSString *)_sendDataRequestWithMethod:(NSString *)method 
-								fullPath:(NSString *)fullURLPath 
-                         queryParameters:(NSDictionary *)params 
+- (NSString *)_sendDataRequestWithMethod:(NSString *)method
+								fullPath:(NSString *)fullURLPath
+                         queryParameters:(NSDictionary *)params
                                 filePath:(NSString *)filePath
-                                    body:(NSDictionary *)bodyParams 
-                             requestType:(JJCloudRequestType)requestType 
+                                    body:(NSDictionary *)bodyParams
+                             requestType:(JJCloudRequestType)requestType
                             responseType:(JJCloudResponseType)responseType;
 
-- (NSString *)_sendDataRequestWithMethod:(NSString *)method 
-								fullPath:(NSString *)fullURLPath 
+- (NSString *)_sendDataRequestWithMethod:(NSString *)method
+								fullPath:(NSString *)fullURLPath
                          queryParameters:(NSDictionary *)params
 								fileName:(NSString *)fileName
 							  dataToSend:(NSData *)requestData
-                                    body:(NSDictionary *)bodyParams 
-                             requestType:(JJCloudRequestType)requestType 
+                                    body:(NSDictionary *)bodyParams
+                             requestType:(JJCloudRequestType)requestType
                             responseType:(JJCloudResponseType)responseType;
 
-- (NSMutableURLRequest *)_baseRequestWithMethod:(NSString *)method 
-                                           path:(NSString *)path 
-                                    requestType:(JJCloudRequestType)requestType 
+- (NSMutableURLRequest *)_baseRequestWithMethod:(NSString *)method
+                                           path:(NSString *)path
+                                    requestType:(JJCloudRequestType)requestType
                                 queryParameters:(NSDictionary *)params;
 
 @end
@@ -88,17 +88,17 @@
 #pragma mark -
 #pragma mark memory
 
-- (void)dealloc 
+- (void)dealloc
 {
 	_delegate = nil;
-	
+
 	[[_connections allValues] makeObjectsPerformSelector:@selector(cancel)];
     [_connections release];
 
 	[userAgent release];
 	[_userEmail release];
 	[_userPassword release];
-	
+
 	[super dealloc];
 }
 
@@ -127,13 +127,13 @@
 
 - (JJCloudEngine *)initWithDelegate:(NSObject *)delegate;
 {
-	if (self = [super init]) 
+	if (self = [super init])
 	{
 		_delegate = delegate;
 		_connections = [[NSMutableDictionary dictionaryWithCapacity:0] retain];
 		[self setClearsCookies:NO];
 	}
-	
+
 	return self;
 }
 
@@ -143,11 +143,11 @@
 - (NSString *)getCloudItems;
 {
 	NSString *path = @"items";
-	return [self _sendRequestWithMethod:nil 
-								   path:path 
-						queryParameters:nil 
-								   body:nil 
-							requestType:JJCloudListAllItemsRequest 
+	return [self _sendRequestWithMethod:nil
+								   path:path
+						queryParameters:nil
+								   body:nil
+							requestType:JJCloudListAllItemsRequest
 						   responseType:JJCloudItems];
 }
 
@@ -155,31 +155,31 @@
 {
 	NSMutableDictionary *queryDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:[NSString stringWithFormat:@"%d", pageNumber], @"page", [NSString stringWithFormat:@"%d", itemsPerPage], @"per_page", nil];
 	NSString *path = @"items";
-	return [self _sendRequestWithMethod:nil 
-								   path:path 
-						queryParameters:queryDict 
-								   body:nil 
-							requestType:JJCloudListAllItemsRequest 
+	return [self _sendRequestWithMethod:nil
+								   path:path
+						queryParameters:queryDict
+								   body:nil
+							requestType:JJCloudListAllItemsRequest
 						   responseType:JJCloudItems];
 }
 
 - (NSString *)getCloudItem:(NSString *)shortSlug;
 {
 	return [self _sendRequestWithMethod:nil
-								   path:shortSlug 
-						queryParameters:nil 
-								   body:nil 
-							requestType:JJCloudViewItemByURLRequest 
+								   path:shortSlug
+						queryParameters:nil
+								   body:nil
+							requestType:JJCloudViewItemByURLRequest
 						   responseType:JJCloudItem];
 }
 
 - (NSString *)deleteCloudItem:(NSString *)shortSlug;
 {
 	return [self _sendRequestWithMethod:nil
-								   path:shortSlug 
-						queryParameters:nil 
-								   body:nil 
-							requestType:JJCloudDeleteItemRequest 
+								   path:shortSlug
+						queryParameters:nil
+								   body:nil
+							requestType:JJCloudDeleteItemRequest
 						   responseType:JJCloudItemToDelete];
 }
 
@@ -187,11 +187,11 @@
 {
 	NSString *path = @"items";
 	NSString *body = [NSString stringWithFormat:@"{\"item\":{\"name\": \"%@\",\"redirect_url\": \"%@\"}}", description, urlString];
-	return [self _sendRequestWithMethod:kHTTPPostMethod 
-								   path:path 
-						queryParameters:nil 
-								   body:body 
-							requestType:JJCloudCreateBookmarkRequest 
+	return [self _sendRequestWithMethod:kHTTPPostMethod
+								   path:path
+						queryParameters:nil
+								   body:body
+							requestType:JJCloudCreateBookmarkRequest
 						   responseType:JJCloudItem];
 }
 
@@ -201,12 +201,12 @@
 	// get s3 data
 	NSString *path = @"items/new";
 	NSDictionary *userInfo = [[[NSDictionary alloc] initWithObjectsAndKeys:[localPathToFile copy], kCloudFilePathKey, nil] autorelease];
-	return [self _sendRequestWithMethod:nil 
-								   path:path 
-						queryParameters:nil 
-								   body:nil 
-							requestType:JJCloudUploadS3FileRequest 
-						   responseType:JJCloudS3Data 
+	return [self _sendRequestWithMethod:nil
+								   path:path
+						queryParameters:nil
+								   body:nil
+							requestType:JJCloudUploadS3FileRequest
+						   responseType:JJCloudS3Data
 							   userInfo:userInfo];
 }
 
@@ -218,13 +218,13 @@
 {
 	// get s3 data
 	NSString *path = @"items/new";
-	NSDictionary *userInfo = [[[NSDictionary alloc] initWithObjectsAndKeys:image, kCloudImageDataKey, 
+	NSDictionary *userInfo = [[[NSDictionary alloc] initWithObjectsAndKeys:image, kCloudImageDataKey,
 							   fileName, kCloudImageFileNameKey, nil] autorelease];
-	return [self _sendRequestWithMethod:nil 
-								   path:path 
-						queryParameters:nil 
-								   body:nil 
-							requestType:JJCloudUploadS3FileRequest 
+	return [self _sendRequestWithMethod:nil
+								   path:path
+						queryParameters:nil
+								   body:nil
+							requestType:JJCloudUploadS3FileRequest
 						   responseType:JJCloudS3Data
 							   userInfo:userInfo];
 }
@@ -248,19 +248,19 @@
 	{
 		[bodyDict setObject:[params valueForKey:key] forKey:key];
 	}
-	
+
 	NSString *filePath = [[connection userData] objectForKey:kCloudFilePathKey];
 	if (filePath) {
 		// post file
-		[self _sendDataRequestWithMethod:kHTTPPostMethod 
-								fullPath:newUrl 
-						 queryParameters:nil 
+		[self _sendDataRequestWithMethod:kHTTPPostMethod
+								fullPath:newUrl
+						 queryParameters:nil
 								filePath:filePath
 									body:bodyDict
-							 requestType:JJCloudUploadFileRequest 
+							 requestType:JJCloudUploadFileRequest
 							responseType:JJCloudItem];
 	}
-	else 
+	else
 	{
 		NSString *fileName = [[connection userData] objectForKey:kCloudImageFileNameKey];
 #if TARGET_OS_IPHONE
@@ -268,22 +268,22 @@
 #else
 		NSImage *image = [[connection userData] objectForKey:kCloudImageDataKey];
 		NSArray *representations = [image representations];
-		NSData *imageData = [NSBitmapImageRep representationOfImageRepsInArray:representations 
+		NSData *imageData = [NSBitmapImageRep representationOfImageRepsInArray:representations
 															  usingType:NSJPEGFileType properties:nil];
 #endif
-		
+
 		// post file
-		[self _sendDataRequestWithMethod:kHTTPPostMethod 
-								fullPath:newUrl 
-						 queryParameters:nil 
-								fileName:fileName 
-#if TARGET_OS_IPHONE		 
-							  dataToSend:UIImageJPEGRepresentation(image, 1.0) 
+		[self _sendDataRequestWithMethod:kHTTPPostMethod
+								fullPath:newUrl
+						 queryParameters:nil
+								fileName:fileName
+#if TARGET_OS_IPHONE
+							  dataToSend:UIImageJPEGRepresentation(image, 1.0)
 #else
 							  dataToSend:imageData
 #endif
-									body:bodyDict 
-							 requestType:JJCloudUploadFileRequest 
+									body:bodyDict
+							 requestType:JJCloudUploadFileRequest
 							responseType:JJCloudItem];
 	}
 
@@ -293,11 +293,11 @@
 
 - (void)_deleteFileWithHref:(NSString *)fileHref;
 {
-	[self _sendRequestWithMethod:kHTTPDeleteMethod 
-							path:fileHref 
-				 queryParameters:nil 
-							body:nil 
-					 requestType:JJCloudDeleteItemRequest 
+	[self _sendRequestWithMethod:kHTTPDeleteMethod
+							path:fileHref
+				 queryParameters:nil
+							body:nil
+					 requestType:JJCloudDeleteItemRequest
 					responseType:JJCloudGeneric];
 }
 
@@ -334,49 +334,49 @@
 #pragma mark -
 #pragma mark Request Methods
 
-- (NSString *)_sendRequest:(NSURLRequest *)theRequest 
-		   withRequestType:(JJCloudRequestType)requestType 
-			  responseType:(JJCloudResponseType)responseType 
+- (NSString *)_sendRequest:(NSURLRequest *)theRequest
+		   withRequestType:(JJCloudRequestType)requestType
+			  responseType:(JJCloudResponseType)responseType
 				  userInfo:(NSDictionary *)userInfo
 {
 	JJCloudEngineHTTPURLConnection *connection;
-    connection = [[[JJCloudEngineHTTPURLConnection alloc] initWithRequest:theRequest 
-																 delegate:self 
-															  requestType:requestType 
-															 responseType:responseType 
+    connection = [[[JJCloudEngineHTTPURLConnection alloc] initWithRequest:theRequest
+																 delegate:self
+															  requestType:requestType
+															 responseType:responseType
 																 userInfo:userInfo] autorelease];
     if (!connection) {
         return nil;
     } else {
         [_connections setObject:connection forKey:[connection identifier]];
     }
-	
+
 	if ([self _isValidDelegateForSelector:@selector(connectionStarted:)])
 		[_delegate connectionStarted:[connection identifier]];
-    
+
     return [connection identifier];
 }
 
-- (NSString *)_sendRequest:(NSURLRequest *)theRequest 
+- (NSString *)_sendRequest:(NSURLRequest *)theRequest
 		   withRequestType:(JJCloudRequestType)requestType
 			  responseType:(JJCloudResponseType)responseType
 {
 	return [self _sendRequest:theRequest withRequestType:requestType responseType:responseType userInfo:nil];
 }
 
-- (NSString *)_sendRequestWithMethod:(NSString *)method 
-                                path:(NSString *)path 
+- (NSString *)_sendRequestWithMethod:(NSString *)method
+                                path:(NSString *)path
                      queryParameters:(NSDictionary *)params
-                                body:(NSString *)body 
-                         requestType:(JJCloudRequestType)requestType 
+                                body:(NSString *)body
+                         requestType:(JJCloudRequestType)requestType
                         responseType:(JJCloudResponseType)responseType
 							userInfo:(NSDictionary *)userInfo;
 {
-	NSMutableURLRequest *theRequest = [self _baseRequestWithMethod:method 
+	NSMutableURLRequest *theRequest = [self _baseRequestWithMethod:method
                                                               path:path
-													   requestType:requestType 
+													   requestType:requestType
                                                    queryParameters:params];
-    
+
     // Set the request body if this is a POST request.
     BOOL isPOST = (method && [method isEqualToString:kHTTPPostMethod]);
 	BOOL isDELETE = (method && [method isEqualToString:kHTTPDeleteMethod]);
@@ -386,7 +386,7 @@
 		if (body) {
 			finalBody = [finalBody stringByAppendingString:body];
 		}
-        
+
 		if (finalBody) {
 			[theRequest setHTTPBody:[finalBody dataUsingEncoding:NSUTF8StringEncoding]];
 		}
@@ -399,110 +399,110 @@
 	return [self _sendRequest:theRequest withRequestType:requestType responseType:responseType userInfo:userInfo];
 }
 
-- (NSString *)_sendRequestWithMethod:(NSString *)method 
-                                path:(NSString *)path 
-                     queryParameters:(NSDictionary *)params 
-                                body:(NSString *)body 
-                         requestType:(JJCloudRequestType)requestType 
+- (NSString *)_sendRequestWithMethod:(NSString *)method
+                                path:(NSString *)path
+                     queryParameters:(NSDictionary *)params
+                                body:(NSString *)body
+                         requestType:(JJCloudRequestType)requestType
                         responseType:(JJCloudResponseType)responseType
 {
 	return [self _sendRequestWithMethod:method path:path queryParameters:params body:body requestType:requestType responseType:responseType userInfo:nil];
 }
 
-- (NSString *)_sendDataRequestWithMethod:(NSString *)method 
-								fullPath:(NSString *)fullURLPath 
+- (NSString *)_sendDataRequestWithMethod:(NSString *)method
+								fullPath:(NSString *)fullURLPath
                          queryParameters:(NSDictionary *)params
 								fileName:(NSString *)fileName
 							  dataToSend:(NSData *)requestData
-                                    body:(NSDictionary *)bodyParams 
-                             requestType:(JJCloudRequestType)requestType 
+                                    body:(NSDictionary *)bodyParams
+                             requestType:(JJCloudRequestType)requestType
                             responseType:(JJCloudResponseType)responseType;
 {
 	if (!method || ![method isEqualToString:kHTTPPostMethod]) return nil;
 
-	NSString *boundary = @"-----0xkHtMlBoUnDaRy-----";  
+	NSString *boundary = @"-----0xkHtMlBoUnDaRy-----";
 	NSString *bodyPrefix = [NSString stringWithFormat:@"--%@\r\n", boundary];
 	NSString *bodySeperator = [NSString stringWithFormat:@"\r\n--%@\r\n", boundary];
 	NSString *bodySuffix = [NSString stringWithFormat:@"\r\n--%@--\r\n", boundary];
-	
+
 	// build request
-	NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:fullURLPath] 
-																   cachePolicy:NSURLCacheStorageAllowed 
+	NSMutableURLRequest *theRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:fullURLPath]
+																   cachePolicy:NSURLCacheStorageAllowed
 															   timeoutInterval:kUrlRequestTimeout];
 	[theRequest setHTTPMethod:method];
-	
+
 	// build body
 	NSMutableData *postBody = [NSMutableData data];
 	[postBody appendData:[bodyPrefix dataUsingEncoding:NSUTF8StringEncoding]];
-	
+
 	// body params
 	for (id key in bodyParams)
 	{
 		NSString *contDisp = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", (NSString *)key];
 		NSString *contValue = [bodyParams objectForKey:key];
-		
+
 		[postBody appendData:[[NSString stringWithFormat:@"%@%@", contDisp, contValue] dataUsingEncoding:NSUTF8StringEncoding]];
 		[postBody appendData:[bodySeperator dataUsingEncoding:NSUTF8StringEncoding]];
 	}
-	
-	// file 
+
+	// file
 	NSString *fileContDisp = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"file\"; filename=\"%@\"\r\n", fileName];
 	NSString *fileContType = @"Content-Type: application/octet-stream\r\n\r\n";
-	
+
 	[postBody appendData:[[NSString stringWithFormat:@"%@%@", fileContDisp, fileContType] dataUsingEncoding:NSUTF8StringEncoding]];
 	[postBody appendData:requestData];
 	[postBody appendData:[bodySuffix dataUsingEncoding:NSUTF8StringEncoding]];
 	[theRequest setHTTPBody:postBody];
-	
+
 	// set headers
 	NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
 	[theRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
 	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
 	[theRequest setValue:[NSString stringWithFormat:@"%d", [postBody length]] forHTTPHeaderField:@"Content-Length"];
-	
+
 	// build connection
 	JJCloudEngineHTTPURLConnection *connection;
 	connection = [[JJCloudEngineHTTPURLConnection alloc] initWithRequest:theRequest delegate:self requestType:requestType responseType:responseType];
-	if (!connection) 
+	if (!connection)
 	{
 		return nil;
 	}
-	else 
+	else
 	{
 		[_connections setObject:connection forKey:[connection identifier]];
 		[connection release];
 	}
-	
+
 	if ([self _isValidDelegateForSelector:@selector(connectionStarted:)])
 		[_delegate connectionStarted:[connection identifier]];
-	
+
 	return [connection identifier];
 }
 
-- (NSString *)_sendDataRequestWithMethod:(NSString *)method 
-								fullPath:(NSString *)fullURLPath 
-                         queryParameters:(NSDictionary *)params 
+- (NSString *)_sendDataRequestWithMethod:(NSString *)method
+								fullPath:(NSString *)fullURLPath
+                         queryParameters:(NSDictionary *)params
                                 filePath:(NSString *)filePath
-                                    body:(NSDictionary *)bodyParams 
-                             requestType:(JJCloudRequestType)requestType 
+                                    body:(NSDictionary *)bodyParams
+                             requestType:(JJCloudRequestType)requestType
                             responseType:(JJCloudResponseType)responseType;
 {
 	if (!filePath) return nil;
 	NSString *filename = [filePath lastPathComponent];
 
-	return [self _sendDataRequestWithMethod:method 
-								   fullPath:fullURLPath 
-							queryParameters:params 
-								   fileName:filename 
-								 dataToSend:[NSData dataWithContentsOfFile:filePath] 
+	return [self _sendDataRequestWithMethod:method
+								   fullPath:fullURLPath
+							queryParameters:params
+								   fileName:filename
+								 dataToSend:[NSData dataWithContentsOfFile:filePath]
 									   body:bodyParams
-								requestType:requestType 
+								requestType:requestType
 							   responseType:responseType];
 }
 
-- (NSMutableURLRequest *)_baseRequestWithMethod:(NSString *)method 
-                                           path:(NSString *)path 
-                                    requestType:(JJCloudRequestType)requestType 
+- (NSMutableURLRequest *)_baseRequestWithMethod:(NSString *)method
+                                           path:(NSString *)path
+                                    requestType:(JJCloudRequestType)requestType
                                 queryParameters:(NSDictionary *)params;
 {
 	NSString *fullPath = [path stringByAddingPercentEscapesUsingEncoding:NSNonLossyASCIIStringEncoding];
@@ -510,7 +510,7 @@
 	{
 		fullPath = [self _queryStringWithBase:fullPath parameters:params prefixed:YES];
 	}
-	
+
 	NSString *domain = nil;
 	switch (requestType) {
 		case JJCloudViewItemByURLRequest:
@@ -521,31 +521,31 @@
 			domain = kCloudAppMyDomain;
 			break;
 	}
-	
+
 	NSString *connectionType = @"http";
 	NSString *urlString = [NSString stringWithFormat:@"%@://%@/%@", connectionType, domain, fullPath];
 	NSURL *finalUrl = [NSURL URLWithString:urlString];
 
 	if (!finalUrl) return nil;
-	
+
 	// make request
-	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:finalUrl 
-																	   cachePolicy:NSURLRequestReloadIgnoringCacheData 
+	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:finalUrl
+																	   cachePolicy:NSURLRequestReloadIgnoringCacheData
 																  timeoutInterval:kUrlRequestTimeout];
-	if (![[self userAgent] isEqualToString:@""]) 
+	if (![[self userAgent] isEqualToString:@""])
 	{
 		[theRequest setValue:[self userAgent] forHTTPHeaderField:@"User-Agent"];
 	}
 	[theRequest setHTTPShouldHandleCookies:NO];
-	
-	if (method) 
+
+	if (method)
 	{
 		[theRequest setHTTPMethod:method];
 		if (method == kHTTPPostMethod && requestType != JJCloudUploadFileRequest)
 			[theRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
 	}
 	[theRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-	
+
 	return theRequest;
 }
 
@@ -555,7 +555,7 @@
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
 	if (_userEmail && _userPassword && [challenge previousFailureCount] == 0 && ![challenge proposedCredential]) {
-		NSURLCredential *credential = [NSURLCredential credentialWithUser:_userEmail password:_userPassword 
+		NSURLCredential *credential = [NSURLCredential credentialWithUser:_userEmail password:_userPassword
 															  persistence:NSURLCredentialPersistenceForSession];
 		[[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
 	} else {
@@ -569,7 +569,7 @@
     // This method is called when the server has determined that it has enough information to create the NSURLResponse.
     // it can be called multiple times, for example in the case of a redirect, so each time we reset the data.
     [connection resetDataLength];
-    
+
     // Get response code.
     NSHTTPURLResponse *resp = (NSHTTPURLResponse *)response;
     NSInteger statusCode = [resp statusCode];
@@ -579,24 +579,24 @@
         NSError *error = [NSError errorWithDomain:@"HTTP" code:statusCode userInfo:nil];
 		if ([self _isValidDelegateForSelector:@selector(requestFailed:withError:)])
 			[_delegate requestFailed:[connection identifier] withError:error];
-        
+
         // Destroy the connection.
         [connection cancel];
 		NSString *connectionIdentifier = [connection identifier];
 		[_connections removeObjectForKey:connectionIdentifier];
 		if ([self _isValidDelegateForSelector:@selector(connectionFinished:)])
 			[_delegate connectionFinished:connectionIdentifier];
-		
+
     } else if (statusCode == 304 || [connection responseType] == JJCloudGeneric) {
         // Not modified, or generic success.
 		if ([self _isValidDelegateForSelector:@selector(requestSucceeded:)])
 			[_delegate requestSucceeded:[connection identifier]];
         if (statusCode == 304) {
-            [self parsingSucceededForRequest:[connection identifier] 
-                              ofResponseType:[connection responseType] 
+            [self parsingSucceededForRequest:[connection identifier]
+                              ofResponseType:[connection responseType]
                            withParsedObjects:[NSArray array]];
         }
-        
+
         // Destroy the connection.
         [connection cancel];
 		NSString *connectionIdentifier = [connection identifier];
@@ -623,7 +623,7 @@
 		[_delegate requestFailed:connectionIdentifier
 					   withError:error];
 	}
-    
+
     // Release the connection.
     [_connections removeObjectForKey:connectionIdentifier];
 	if ([self _isValidDelegateForSelector:@selector(connectionFinished:)])
@@ -635,13 +635,13 @@
 {
 	NSString *connID = [connection identifier];
 	JJCloudResponseType responseType = [connection responseType];
-	
+
     // Inform delegate.
 	if ([self _isValidDelegateForSelector:@selector(requestSucceeded:)])
 		[_delegate requestSucceeded:connID];
-    
+
     NSData *receivedData = [connection data];
-    if (receivedData) {        
+    if (receivedData) {
         if (responseType == JJCloudImage) {
 			// Create image from data.
 #if TARGET_OS_IPHONE
@@ -658,7 +658,7 @@
 			if (responseType == JJCloudUploadFileRequest) return;
         }
     }
-	
+
 	// Release the connection.
 	[_connections removeObjectForKey:connID];
 	if ([self _isValidDelegateForSelector:@selector(connectionFinished:)])
@@ -674,9 +674,9 @@
     NSString *identifier = [[[connection identifier] copy] autorelease];
     JJCloudRequestType requestType = [connection requestType];
     JJCloudResponseType responseType = [connection responseType];
-	
+
 	NSURL *URL = [connection url];
-	[JJCloudTouchJSONParser parserWithJSON:jsonData 
+	[JJCloudTouchJSONParser parserWithJSON:jsonData
 								  delegate:self
 					  connectionIdentifier:identifier
 							   requestType:requestType
@@ -687,8 +687,8 @@
 #pragma mark -
 #pragma mark JJCloudParserDelegate Methods
 
-- (void)parsingSucceededForRequest:(NSString *)identifier 
-                    ofResponseType:(JJCloudResponseType)responseType 
+- (void)parsingSucceededForRequest:(NSString *)identifier
+                    ofResponseType:(JJCloudResponseType)responseType
                  withParsedObjects:(NSArray *)parsedObjects
 {
     // Forward appropriate message to _delegate, depending on responseType.
@@ -712,18 +712,18 @@
     }
 }
 
-- (void)parsingFailedForRequest:(NSString *)requestIdentifier 
-                 ofResponseType:(JJCloudResponseType)responseType 
+- (void)parsingFailedForRequest:(NSString *)requestIdentifier
+                 ofResponseType:(JJCloudResponseType)responseType
                       withError:(NSError *)error
 {
 	if ([self _isValidDelegateForSelector:@selector(requestFailed:withError:)])
 		[_delegate requestFailed:requestIdentifier withError:error];
 }
 
-- (void)parsedObject:(NSDictionary *)dictionary forRequest:(NSString *)requestIdentifier 
+- (void)parsedObject:(NSDictionary *)dictionary forRequest:(NSString *)requestIdentifier
 	  ofResponseType:(JJCloudResponseType)responseType
 {
-	if (responseType != JJCloudS3Data) 
+	if (responseType != JJCloudS3Data)
 	{
 		if ([self _isValidDelegateForSelector:@selector(receivedObject:forRequest:)])
 			[_delegate receivedObject:dictionary forRequest:requestIdentifier];
@@ -751,7 +751,7 @@
     if (base) {
         [str appendString:base];
     }
-    
+
     // Append each name-value pair.
     if (params) {
         NSUInteger i;
@@ -763,11 +763,11 @@
                 [str appendString:@"&"];
             }
             NSString *name = [names objectAtIndex:i];
-            [str appendString:[NSString stringWithFormat:@"%@=%@", 
+            [str appendString:[NSString stringWithFormat:@"%@=%@",
 							   name, [self _encodeString:[params objectForKey:name]]]];
         }
     }
-    
+
     return str;
 }
 
@@ -785,9 +785,9 @@
 
 - (NSString *)_encodeString:(NSString *)string
 {
-    NSString *result = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL, 
-																		   (CFStringRef)string, 
-																		   NULL, 
+    NSString *result = (NSString *)CFURLCreateStringByAddingPercentEscapes(NULL,
+																		   (CFStringRef)string,
+																		   NULL,
 																		   (CFStringRef)@";/?:@&=$+{}<>,",
 																		   kCFStringEncodingUTF8);
     return [result autorelease];
@@ -800,28 +800,28 @@
 	if (!url) {
 		return nil;
 	}
-    
+
 	// Construct an NSMutableURLRequest for the URL and set appropriate request method.
-	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:url 
-                                                              cachePolicy:NSURLRequestReloadIgnoringCacheData 
+	NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:url
+                                                              cachePolicy:NSURLRequestReloadIgnoringCacheData
                                                           timeoutInterval:kUrlRequestTimeout];
-    
+
 	JJCloudEngineHTTPURLConnection *connection;
-	connection = [[JJCloudEngineHTTPURLConnection alloc] initWithRequest:theRequest 
-                                                            delegate:self 
-                                                         requestType:JJCloudImageRequest 
+	connection = [[JJCloudEngineHTTPURLConnection alloc] initWithRequest:theRequest
+                                                            delegate:self
+                                                         requestType:JJCloudImageRequest
                                                         responseType:JJCloudImage];
-   
+
 	if (!connection) {
 		return nil;
 	} else {
 		[_connections setObject:connection forKey:[connection identifier]];
 		[connection release];
 	}
-	
+
 	if ([self _isValidDelegateForSelector:@selector(connectionStarted:)])
 		[_delegate connectionStarted:[connection identifier]];
-    
+
 	return [connection identifier];
 }
 
@@ -853,8 +853,8 @@
 	_userEmail = [newEmail retain];
 	[_userPassword release];
 	_userPassword = [newPassword retain];
-	
-	if ([self clearsCookies]) 
+
+	if ([self clearsCookies])
 	{
 		NSString *urlString = [NSString stringWithFormat:@"%@://%@", @"http", kCloudAppDomain];
 		NSURL *url = [NSURL URLWithString:urlString];

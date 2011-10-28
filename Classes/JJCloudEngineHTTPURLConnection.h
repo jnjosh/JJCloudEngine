@@ -23,14 +23,14 @@
 @property (retain, readonly) NSURL *url;
 @property (retain) NSDictionary *userData;
 
-- (id)initWithRequest:(NSURLRequest *)request 
-			 delegate:(id)delegate 
-		  requestType:(JJCloudRequestType)newRequestType 
+- (id)initWithRequest:(NSURLRequest *)request
+			 delegate:(id)delegate
+		  requestType:(JJCloudRequestType)newRequestType
 		 responseType:(JJCloudResponseType)newResponseType;
 
-- (id)initWithRequest:(NSURLRequest *)request 
-			 delegate:(id)delegate 
-		  requestType:(JJCloudRequestType)newRequestType 
+- (id)initWithRequest:(NSURLRequest *)request
+			 delegate:(id)delegate
+		  requestType:(JJCloudRequestType)newRequestType
 		 responseType:(JJCloudResponseType)newResponseType
 			 userInfo:(NSDictionary *)userInfoDict;
 

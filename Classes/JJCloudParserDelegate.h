@@ -18,7 +18,7 @@
 				 ofResponseType:(JJCloudResponseType)responseType
 					  withError:(NSError *)error;
 
-- (void)parsedObject:(NSDictionary *)parsedObject 
+- (void)parsedObject:(NSDictionary *)parsedObject
 		  forRequest:(NSString *)identifier
 	  ofResponseType:(JJCloudResponseType)responseType;
 
