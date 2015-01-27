@@ -15,7 +15,7 @@
 
 @interface JJCloudEngine : NSObject <JJCloudParserDelegate> {
 	__weak NSObject<JJCloudEngineDelegate> *_delegate;
-	
+
 	NSString *_userEmail;
 	NSString *_userPassword;
 

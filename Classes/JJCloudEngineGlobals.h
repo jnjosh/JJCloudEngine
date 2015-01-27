@@ -32,7 +32,7 @@ typedef enum
 	JJCloudAudioType = 6
 } JJCloudItemType;
 
-typedef enum 
+typedef enum
 {
 	JJCloudViewItemByURLRequest = 0,
 	JJCloudListAllItemsRequest,
@@ -43,7 +43,7 @@ typedef enum
 	JJCloudImageRequest
 } JJCloudRequestType;
 
-typedef enum 
+typedef enum
 {
 	JJCloudGeneric = 0,
 	JJCloudItems = 1,

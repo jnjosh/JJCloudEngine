@@ -24,7 +24,7 @@
 - (void)imageReceived:(UIImage *)image forRequest:(NSString *)connectionId;
 #else
 - (void)imageReceived:(NSImage *)image forRequest:(NSString *)connectionId;
-#endif 
+#endif
 
 
 @end

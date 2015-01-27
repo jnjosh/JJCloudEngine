@@ -14,13 +14,13 @@
 #pragma mark -
 #pragma mark Memory
 
-- (void)dealloc 
+- (void)dealloc
 {
 	[parsedObjects release];
 	[json release];
 	[identifier release];
 	[URL release];
-	
+
 	delegate = nil;
 	[super dealloc];
 }
@@ -64,11 +64,11 @@ connectionIdentifier:(NSString *)theIdentifier
 				[self _parsedObject:result];
 			}
 		}
-		else 
+		else
 		{
 			[self _parsedObject:results];
 		}
-		
+
 		[self _parsingDidEnd];
 	}
 	return self;

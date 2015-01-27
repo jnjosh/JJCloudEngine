@@ -13,10 +13,10 @@
 
 @synthesize window;
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {    
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 	[tableView setDelegate:self];
 	[tableView setDataSource:self];
-	
+
 	NSLog(@"Testing JJCloudEngine version %@", [JJCloudEngine version]);
 
 	// setup user email and password for CloudApp
@@ -26,37 +26,37 @@
 	{
 		NSLog(@"You failed at the simple parts. I need to log in.");
 	}
-	
+
 	//=== Samples below ===//
-	
+
 	// create cloud engine instance
 	cloudEngine = [[JJCloudEngine alloc] initWithDelegate:self];
 	[cloudEngine setEmail:userEmail password:userPassword];
-	
+
 	// sample getting most recent items
 	NSLog(@"Get All Listed items from Connection ID: %@", [cloudEngine getCloudItems]);
-	
+
 	// sample getting per page items
 	//NSLog(@"Get page 2, items per page 5 -> %@", [cloudEngine getCloudItems:5 forPage:2]);
-	
+
 	// sample getting a specific item http://cl.ly/1CXW
 	//NSLog(@"Get single item 1CXW on connection: %@", [cloudEngine getCloudItem:@"1CXW"]);
-	
-	// sample getting an image 
+
+	// sample getting an image
 	//[cloudEngine getCloudItem:@"1E81"];
-	
+
 	// sample deleting a cloud item
 	//[cloudEngine deleteCloudItem:@"1ETd"];
-	
+
 	// sample creating new bookmark
 	//NSLog(@"Create new bookmark for jnjosh.com from connection: %@", [cloudEngine createBookmarkWithURL:@"http://www.jnjosh.com" andDescription:@"Link from JJCloudEngine!"]);
 
 	// upload a file -- server determines type
 	//[cloudEngine uploadFile:[[NSBundle mainBundle] pathForResource:@"JJCloudEngine" ofType:@"jpg"]];
-	
+
 	// upload an image with specified filename
 	//[cloudEngine uploadImage:[UIImage imageNamed:@"JJCloudEngine.jpg"] fileName:@"JJCloudEngine Image.jpg"];
-	
+
 	[window makeKeyAndVisible];
 	return YES;
 }
@@ -103,7 +103,7 @@
 
 - (NSInteger)tableView:(UITableView *)aTableView numberOfRowsInSection:(NSInteger)section
 {
-	if (_cloudItems != nil) 
+	if (_cloudItems != nil)
 		return [_cloudItems count];
 
 	return 0;
@@ -113,7 +113,7 @@
 {
 	static NSString *cellId = @"Cell";
 	UILabel *itemName;
-	
+
 	UITableViewCell *cell = [aTableView dequeueReusableCellWithIdentifier:cellId];
 	if (cell == nil)
 	{
@@ -128,7 +128,7 @@
 	} else {
 		itemName = (UILabel *)[cell viewWithTag:1001];
 	}
-	
+
 	NSDictionary *dictItem = [_cloudItems objectAtIndex:indexPath.row];
 	NSString *name = (NSString *)[dictItem objectForKey:@"name"];
 	NSNumber *views = [dictItem objectForKey:@"view_counter"];
